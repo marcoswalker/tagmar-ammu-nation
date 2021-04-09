@@ -1,4 +1,4 @@
-# Gestão de munições Tagmar
+# Gestão de munições Tagmar
 ![](page/preview.jpg)
 ## Módulo para sistema Tagmar RPG no Foundry Vtt
 ### Esse módulo depende do sistema [Tagmar RPG](https://foundryvtt.com/packages/tagmar) para funcionar.
