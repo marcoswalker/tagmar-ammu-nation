@@ -52,10 +52,11 @@ Hooks.on("renderActorSheet", function (sheet, html, character) {
 
 Hooks.on("renderItemSheet", async function (sheet, html, item) {
     const item_sheet = sheet.item;
-    if (item_sheet.data.type === "Combate" && item_sheet.isOwned) {
+    if (item_sheet.data.type === "Combate" && sheet.actor !== null) {
         html.find('[name="data.municao"]').prop("readonly",true);
-        let bonus_dano = html.find('[name="data.bonus_dano"]');
-        $('<label class="mediaeval" style="margin-left:20px;">Munição: </label><select class="municoes_mod"><option value=""></option></select>').insertAfter($(bonus_dano));
+        //let bonus_dano = html.find('[name="data.bonus_dano"]');
+        let bonus_dano = html.find('.row .dados').first();
+        $('<div class="row dados"><div class="col-md-12"><label class="mediaeval" for="municoes_mod">Escolha a Munição: </label><select name="municoes_mod" class="municoes_mod"><option value=""></option></select></div></div>').insertBefore($(bonus_dano));
         let municoes_tag = sheet.actor.getFlag('tagmar-ammu-nation', 'municoes');
         for (let mun of municoes_tag) {
             html.find('.municoes_mod').append("<option class='mediaeval' value='"+mun.nome+"'>"+mun.nome+"</option>");
@@ -86,9 +87,12 @@ Hooks.on("renderItemSheet", async function (sheet, html, item) {
 
 Hooks.on('tagmar_itemRoll', async function (roolItem, user) {
     if (user !== game.user) return;
+    if (roolItem.data.type !== "Combate") return;
     const actor = roolItem.actor;
     let municao_flags = await actor.getFlag('tagmar-ammu-nation', 'municoes');
+    if (typeof municao_flags === 'undefined') return;
     let item_flag = await actor.getFlag('tagmar-ammu-nation', roolItem.data.name);
+    if (typeof item_flag === 'undefined') return;
     let new_flag = [];
     for (let mun of municao_flags) {
         if (mun.nome === item_flag) {
