@@ -17,8 +17,21 @@ Hooks.on("renderActorSheet", function (sheet, html, character) {
                         let name = html.find('.nome_municao').val();
                         let quant = html.find('.quant_municao').val();
                         if (name && quant) {
-                            flag_municoes.push({nome: name, quant: quant});
+                            let find_name = flag_municoes.filter(f => f.nome === name);
+                            if (find_name.length > 0) {
+                                for (let flag of flag_municoes) {
+                                    if (flag.nome === name) {
+                                        flag.quant = quant;
+                                    }
+                                }
+                            } else flag_municoes.push({nome: name, quant: quant});
                             await actor.setFlag('tagmar-ammu-nation', 'municoes', flag_municoes);
+                            for (let item of actor.items) {
+                                let itemFlag = await actor.getFlag('tagmar-ammu-nation', item.name);
+                                if (item.type === "Combate" && itemFlag === name) {
+                                    await item.update({'data.municao': quant});
+                                }
+                            }
                             atualizaTable();
                         }
                     });
@@ -39,7 +52,8 @@ Hooks.on("renderActorSheet", function (sheet, html, character) {
                                     new_flag.push(mun);
                                 }
                             }
-                            await actor.setFlag('tagmar-ammu-nation', 'municoes', new_flag);
+                            if (new_flag.length > 0) await actor.setFlag('tagmar-ammu-nation', 'municoes', new_flag);
+                            else await actor.unsetFlag('tagmar-ammu-nation', 'municoes');
                             atualizaTable();
                         });
                     }
@@ -53,7 +67,6 @@ Hooks.on("renderActorSheet", function (sheet, html, character) {
 Hooks.on("renderItemSheet", async function (sheet, html, item) {
     const item_sheet = sheet.item;
     if (item_sheet.data.type === "Combate" && sheet.actor !== null) {
-        //let bonus_dano = html.find('[name="data.bonus_dano"]');
         let bonus_dano = html.find('.row .dados').first();
         $('<div class="row dados"><div class="col-md-12"><label class="mediaeval" for="municoes_mod">Escolha a Munição: </label><select name="municoes_mod" class="municoes_mod"><option value=""></option></select></div></div>').insertBefore($(bonus_dano));
         let municoes_tag = sheet.actor.getFlag('tagmar-ammu-nation', 'municoes');
@@ -97,15 +110,21 @@ Hooks.on('tagmar_itemRoll', async function (roolItem, user) {
     let new_flag = [];
     for (let mun of municao_flags) {
         if (mun.nome === item_flag) {
-            new_flag.push({nome: mun.nome, quant: mun.quant-1});
+           if (mun.quant > 0) new_flag.push({nome: mun.nome, quant: mun.quant-1});
+           else new_flag.push({nome: mun.nome, quant: 0});
         } else new_flag.push(mun);
     }
     if (new_flag.length > 0) await actor.setFlag('tagmar-ammu-nation', 'municoes', new_flag);
     for (let item of actor.items) {
-        if (item.type === "Combate" && actor.getFlag('tagmar-ammu-nation', item.name) === item_flag && typeof actor.getFlag('tagmar-ammu-nation', item.name) !== 'undefined' && item.name !== roolItem.data.name) {
-            await item.update({
-                'data.municao': item.data.data.municao-1
-            });
+        let thisItemFlag = await actor.getFlag('tagmar-ammu-nation', item.name);
+        if (item.type === "Combate" && thisItemFlag === item_flag && typeof thisItemFlag !== 'undefined' && item.name !== roolItem.data.name) {
+            let ammoFlag = await actor.getFlag('tagmar-ammu-nation', 'municoes');
+            let amoFind = ammoFlag.find(f => f.nome === thisItemFlag);
+            if (amoFind) {
+                await item.update({
+                    'data.municao': amoFind.quant
+                });
+            }
         }
     }
 });

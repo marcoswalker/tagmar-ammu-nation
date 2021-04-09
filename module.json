@@ -3,7 +3,7 @@
     "title": "Gestão de munição Tagmar",
     "description": "Sistema de gerenciamento de munições.",
     "author": "Marcos Walker",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "url": "https://github.com/marcoswalker/tagmar-ammu-nation",
     "minimumCoreVersion": "0.7.9",
     "compatibleCoreVersion": "0.7.9",
