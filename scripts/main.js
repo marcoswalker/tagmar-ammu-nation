@@ -67,8 +67,8 @@ Hooks.on("renderActorSheet", function (sheet, html, character) {
 Hooks.on("renderItemSheet", async function (sheet, html, item) {
     const item_sheet = sheet.item;
     if (item_sheet.data.type === "Combate" && sheet.actor !== null) {
-        let bonus_dano = html.find('.row .dados').first();
-        $('<div class="row dados"><div class="col-md-12"><label class="mediaeval" for="municoes_mod">Escolha a Munição: </label><select name="municoes_mod" class="municoes_mod"><option value=""></option></select></div></div>').insertBefore($(bonus_dano));
+        let bonus_dano = html.find('.d_dano').first();
+        $('<div class="col-md-1"><label><h4 class="mediaeval"><i class="fab fa-pied-piper-hat"></i></h4></label></div><div class="col-md-3"><select name="municoes_mod" class="municoes_mod"><option value=""></option></select></div>').insertAfter($(bonus_dano));
         let municoes_tag = sheet.actor.getFlag('tagmar-ammu-nation', 'municoes');
         if (typeof municoes_tag === 'undefined') return;
         html.find('[name="data.municao"]').prop("readonly",true);
