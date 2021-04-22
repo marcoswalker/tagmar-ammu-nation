@@ -110,8 +110,11 @@ Hooks.on('tagmar_itemRoll', async function (roolItem, user) {
     let new_flag = [];
     for (let mun of municao_flags) {
         if (mun.nome === item_flag) {
-           if (mun.quant > 0) new_flag.push({nome: mun.nome, quant: mun.quant-1});
-           else new_flag.push({nome: mun.nome, quant: 0});
+            let mun_gast = 0;
+            if (roolItem.data.data.tipo == "") mun_gast = roolItem.data.data.nivel;
+            else mun_gast = 1;
+            if (mun.quant > 0) new_flag.push({nome: mun.nome, quant: mun.quant-mun_gast});
+            else new_flag.push({nome: mun.nome, quant: 0});
         } else new_flag.push(mun);
     }
     if (new_flag.length > 0) await actor.setFlag('tagmar-ammu-nation', 'municoes', new_flag);
