@@ -8,6 +8,10 @@
     "minimumCoreVersion": "0.7.9",
     "compatibleCoreVersion": "9",
     "socket": false,
+    "system": [
+        "tagmar",
+        "tagmar_rpg"
+    ],
     "esmodules": [
         "scripts/main.js"
     ],
