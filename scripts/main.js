@@ -1,5 +1,5 @@
 Hooks.on("renderActorSheet", function (sheet, html, character) {
-    if (sheet.actor.data.type !== "Personagem") return;
+    if (sheet.actor.type !== "Personagem") return;
     let teste = html.find('.combate table').first();
     $('<a class="botaoMunicao"><i class="fab fa-pied-piper-hat"></i><span class="mediaeval">Gestão de munições</span></a>').insertBefore($(teste));
     const actor = sheet.actor;
@@ -66,7 +66,7 @@ Hooks.on("renderActorSheet", function (sheet, html, character) {
 
 Hooks.on("renderItemSheet", async function (sheet, html, item) {
     const item_sheet = sheet.item;
-    if (item_sheet.data.type === "Combate" && sheet.actor !== null) {
+    if (item_sheet.type === "Combate" && sheet.actor !== null) {
         let bonus_dano = html.find('.d_dano').first();
         $('<div class="col-md-1"><label><h4 class="mediaeval"><i class="fab fa-pied-piper-hat"></i></h4></label></div><div class="col-md-3"><select name="municoes_mod" class="municoes_mod"><option value=""></option></select></div>').insertAfter($(bonus_dano));
         let municoes_tag = sheet.actor.getFlag('tagmar-ammu-nation', 'municoes');
@@ -75,13 +75,13 @@ Hooks.on("renderItemSheet", async function (sheet, html, item) {
         for (let mun of municoes_tag) {
             html.find('.municoes_mod').append("<option class='mediaeval' value='"+mun.nome+"'>"+mun.nome+"</option>");
         }
-        let ammu_item = await sheet.actor.getFlag('tagmar-ammu-nation', item_sheet.data.name);
+        let ammu_item = await sheet.actor.getFlag('tagmar-ammu-nation', item_sheet.name);
         if (ammu_item) html.find('.municoes_mod').val(ammu_item).change();
         else html.find('.municoes_mod').val("").change();
         html.find(".municoes_mod").change(async function () {
             let municao = html.find(".municoes_mod").val();
             if (municao !== "") {
-                await sheet.actor.setFlag('tagmar-ammu-nation', item_sheet.data.name, municao);
+                await sheet.actor.setFlag('tagmar-ammu-nation', item_sheet.name, municao);
                 let ammu = {};
                 for (let mun of municoes_tag) {
                     if (mun.nome === municao) ammu = mun;
@@ -90,7 +90,7 @@ Hooks.on("renderItemSheet", async function (sheet, html, item) {
                     'data.municao': ammu.quant
                 });
             } else {
-                await sheet.actor.unsetFlag('tagmar-ammu-nation', item_sheet.data.name);
+                await sheet.actor.unsetFlag('tagmar-ammu-nation', item_sheet.name);
                 item_sheet.update({
                     'data.municao': 0
                 });
@@ -101,17 +101,17 @@ Hooks.on("renderItemSheet", async function (sheet, html, item) {
 
 Hooks.on('tagmar_itemRoll', async function (roolItem, user) {
     if (user !== game.user) return;
-    if (roolItem.data.type !== "Combate") return;
+    if (roolItem.type !== "Combate") return;
     const actor = roolItem.actor;
     let municao_flags = await actor.getFlag('tagmar-ammu-nation', 'municoes');
     if (typeof municao_flags === 'undefined') return;
-    let item_flag = await actor.getFlag('tagmar-ammu-nation', roolItem.data.name);
+    let item_flag = await actor.getFlag('tagmar-ammu-nation', roolItem.name);
     if (typeof item_flag === 'undefined') return;
     let new_flag = [];
     for (let mun of municao_flags) {
         if (mun.nome === item_flag) {
             let mun_gast = 0;
-            if (roolItem.data.data.tipo == "") mun_gast = roolItem.data.data.nivel;
+            if (roolItem.system.tipo == "") mun_gast = roolItem.system.nivel;
             else mun_gast = 1;
             if (mun.quant > 0) new_flag.push({nome: mun.nome, quant: mun.quant-mun_gast});
             else new_flag.push({nome: mun.nome, quant: 0});
@@ -120,7 +120,7 @@ Hooks.on('tagmar_itemRoll', async function (roolItem, user) {
     if (new_flag.length > 0) await actor.setFlag('tagmar-ammu-nation', 'municoes', new_flag);
     for (let item of actor.items) {
         let thisItemFlag = await actor.getFlag('tagmar-ammu-nation', item.name);
-        if (item.type === "Combate" && thisItemFlag === item_flag && typeof thisItemFlag !== 'undefined' && item.name !== roolItem.data.name) {
+        if (item.type === "Combate" && thisItemFlag === item_flag && typeof thisItemFlag !== 'undefined' && item.name !== roolItem.name) {
             let ammoFlag = await actor.getFlag('tagmar-ammu-nation', 'municoes');
             let amoFind = ammoFlag.find(f => f.nome === thisItemFlag);
             if (amoFind) {
