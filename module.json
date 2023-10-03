@@ -1,5 +1,5 @@
 {
-    "name": "tagmar-ammu-nation",
+    "id": "tagmar-ammu-nation",
     "title": "Tagmar Gestão de Munições",
     "description": "Sistema de gerenciamento de munições.",
     "authors": [
@@ -9,12 +9,11 @@
         "flags": {}
       }
     ],
-    "version": "1.0.7",
+    "version": "1.0.8",
     "url": "https://github.com/marcoswalker/tagmar-ammu-nation",
     "compatibility": {
         "minimum": "10",
-        "verified": "10",
-        "maximum": "10"
+        "verified": "11"
     },
     "socket": false,
     "relationships": {
