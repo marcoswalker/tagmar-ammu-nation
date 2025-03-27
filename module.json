@@ -1,0 +1,37 @@
+{
+  "id": "tagmar-ammu-nation",
+  "title": "Tagmar Gestão de Munições",
+  "description": "Sistema de gerenciamento de munições.",
+  "authors": [
+    {
+      "name": "Marcos Walker",
+      "url": "https://github.com/marcoswalker",
+      "flags": {}
+    }
+  ],
+  "version": "1.0.9",
+  "url": "https://github.com/marcoswalker/tagmar-ammu-nation",
+  "compatibility": {
+    "minimum": "10",
+    "verified": "12"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "tagmar",
+        "type": "system",
+        "compatibility": {}
+      },
+      {
+        "id": "tagmar_rpg",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "manifest": "https://raw.githubusercontent.com/marcoswalker/tagmar-ammu-nation/master/module.json",
+  "download": "https://codeload.github.com/marcoswalker/tagmar-ammu-nation/zip/master"
+}
